@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ziroom.mybatis.mapper.OrdersMapper">
+
+	<insert id="insertOrders" parameterType="cn.ziroom.mybatis.pojo.Orders">
+		<selectKey resultType="string" order="BEFORE" keyProperty="id">
+		select UUID()
+		</selectKey>
+		insert into orders(id,name,addr,order_date,user_id) values(#{id},#{name},#{addr},#{order_date},#{user.id})
+	</insert>
+	
+	<update id="updateOrders" parameterType="cn.ziroom.mybatis.pojo.Orders">
+		update orders set addr = #{addr},order_date = #{order_date},user_id = #{user.id} where id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ziroom.mybatis.mapper.ItemMapper">
+	<resultMap type="cn.ziroom.mybatis.pojo.Item" id="getItemByIdMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="price" property="price"/>
+		<result column="addr" property="addr"/>
+		<result column="item_date" property="item_date"/>
+		<result column="is_packing" property="isPacking"/>
+	</resultMap>
+	<!-- 打开二级缓存-->
+	 <!-- 输出日志 -->
+	 <!--  <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> -->
+	 <!-- 不输出日志 -->
+	 <!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	 <!-- <cache /> -->
+	 
+	 <!-- RedisCache -->
+	<!--  <cache type="org.mybatis.caches.redis.RedisCache" /> -->
+	 
+	 <!-- sql片段,提高sql重用性 -->
+	 <sql id="selectSql">
+		select * from item
+	</sql>
+	 
+	<insert id="insertItem" parameterType="cn.ziroom.mybatis.pojo.Item">
+		<selectKey resultType="string" order="BEFORE" keyProperty="id">
+		select UUID()
+		</selectKey>
+		insert into item(id,name,price,addr,item_date,is_packing) values(#{id},#{name},#{price},#{addr},#{item_date},#{isPacking})
+	</insert>
+	
+	<update id="updatItem" parameterType="cn.ziroom.mybatis.pojo.Item">
+		update item set price = #{price}, addr = #{addr}, item_date = #{item_date} where id = #{id}
+	</update>
+	<!-- 
+	useCache:true/false 设置具体的SQL是否支持二级缓存
+	
+	 -->
+	<select id="findItemById" parameterType="string" resultMap="getItemByIdMap" flushCache="false">
+		<include refid="selectSql" /> where id = #{id}
+	</select>
+	
+	<select id="findItemByName" parameterType="string" resultType="cn.ziroom.mybatis.pojo.Item">
+		<include refid="selectSql" /> where name like #{name}
+	</select>
+	
+	<delete id="deleteItem" parameterType="string">
+		delete from item where id = #{id}
+	</delete>
+	
+</mapper>
